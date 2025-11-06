@@ -2,7 +2,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-public class implementacion {
+public class addArrays {
 
     public List <Integer> add(List<Integer> left, List<Integer> right) {
 
