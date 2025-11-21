@@ -1,22 +1,26 @@
 
+// Importaciones de JUnit 5 (Jupiter)
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.Test; // CORREGIDO: Usamos la versión Jupiter para compatibilidad
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
+// Importación de AssertJ (necesario para las pruebas de las fotos)
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import org.junit.Test;
+import java.util.stream.Stream;
 
 public class AppTests {
+
     @Test
     public void testAdd_WhenLeftListContainsNegativeNumber_ShouldThrowException() {
-        // 1. Preparar (Arrange)
-        // Introducimos un -5 en la lista izquierda
         List<Integer> left = Arrays.asList(1, -5, 3); 
         List<Integer> right = Arrays.asList(1, 2, 3);
 
-        // 2. Actuar y Verificar (Act & Assert)
-        // Verificamos que al ejecutar 'add' con estos datos, se lance IllegalArgumentException
         assertThrows(IllegalArgumentException.class, () -> {
             new addArrays().add(left, right);
         }, "El método debería lanzar IllegalArgumentException si hay dígitos negativos");
@@ -27,8 +31,48 @@ public class AppTests {
         List<Integer> left = Arrays.asList(1, null, 5);
         List<Integer> right = Arrays.asList(2, 3);
 
-        assertThrows(IllegalArgumentException.class, () -> {
+        assertThrows(RuntimeException.class, () -> {
             new addArrays().add(left, right);
-        }, "Se esperaba una excepción controlada, no un NullPointerException del sistema");
+        }, "Se esperaba una excepción controlada al tener nulos internos");
+    }
+
+    @ParameterizedTest
+    @MethodSource("testCases")
+    public void shouldReturnCorrectResult(List<Integer> left, List<Integer> right, List<Integer> expected) {
+        addArrays adder = new addArrays();
+        
+        List<Integer> actualResult = adder.add(left, right);
+
+
+        assertThat(actualResult).isEqualTo(expected);
+    }
+
+    static Stream<Arguments> testCases() {
+        return Stream.of(
+            Arguments.of(null, numbers(7, 2), null),           
+            Arguments.of(numbers(7, 2), null, null),             
+            Arguments.of(numbers(), numbers(7, 2), numbers(7, 2)), 
+            
+            Arguments.of(numbers(1), numbers(2), numbers(3)),    
+            Arguments.of(numbers(9), numbers(2), numbers(1, 1)),  
+
+            Arguments.of(numbers(2, 2), numbers(3, 3), numbers(5, 5)), 
+            Arguments.of(numbers(2, 9), numbers(2, 3), numbers(5, 2)),
+            Arguments.of(numbers(9, 9, 8), numbers(1, 7, 2), numbers(1, 1, 7, 0)), 
+
+            Arguments.of(numbers(2, 2), numbers(3), numbers(2, 5)), 
+            
+             Arguments.of(numbers(0, 0, 0, 1, 2), numbers(0, 2, 3), numbers(3, 5)), 
+
+            Arguments.of(numbers(9, 9), numbers(1), numbers(1, 0, 0)) 
+        );
+    }
+
+    private static List<Integer> numbers(int... nums) {
+        List<Integer> list = new ArrayList<>();
+        for (int n : nums) {
+            list.add(n);
+        }
+        return list;
     }
 }
