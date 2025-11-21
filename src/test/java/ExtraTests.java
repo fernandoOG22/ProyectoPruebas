@@ -1,13 +1,11 @@
-
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Test;
 
-public class AppTests {
+public class ExtraTests {
     @Test
     public void testCuandoLeftListContieneElementoNegativo_DeberiaArrojarException() {
         List<Integer> left = Arrays.asList(1, -5, 3); 
